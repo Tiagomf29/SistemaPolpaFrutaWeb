@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/modelo.xhtml">
+
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menu.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+
+		<f:facet name="header">
+			<h1 class="Formularios">Perdas</h1>
+		</f:facet>
+
+		<f:facet name="footer">
+			<center>
+				<p:commandButton value="Cadastrar"
+					oncomplete="PF('dlgCadPerda').show();"
+					actionListener="#{MBPerda.preparaPerda}"
+					update=":frmCadPerda:pnlCadPerda" />
+
+			</center>
+		</f:facet>
+
+		<h:form id="frmPerda">
+
+			<p:dataTable id="tblPerda" emptyMessage="Nenhum registro encontrado!"
+				value="#{MBPerda.itens}" var="item" widgetVar="wtblPerda">
+
+				<p:column headerText="Código Perda">
+					<center>
+						<h:outputText value="#{item.idPerda}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Produto">
+					<center>
+						<p class="DescricaoProduto">
+							<h:outputText value="#{item.produto.descricao}" />
+						</p>
+					</center>
+				</p:column>
+
+				<p:column headerText="Data/Hora perda">
+					<center>
+						<h:outputText value="#{item.dataHoraPerda}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+						</h:outputText>
+					</center>
+				</p:column>
+
+				<p:column headerText="Quantidade">
+					<center>
+						<h:outputText value="#{item.qtde}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Ação">
+					<center>
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{MBPerda.preparaPerda}"
+							oncomplete="PF('dlgExcluirPerda').show();"
+							update=":frmExcluir:pnlExcluir">
+
+							<f:setPropertyActionListener value="#{item}"
+								target="#{MBPerda.perda}" />
+
+						</p:commandButton>
+					</center>
+				</p:column>
+
+			</p:dataTable>
+
+		</h:form>
+
+
+		<p:dialog widgetVar="dlgExcluirPerda" modal="true" appendTo="@(body)"
+			resizable="false" closable="false" draggable="false"
+			header="Excluir Perda">
+
+			<h:form id="frmExcluir">
+
+				<h:panelGrid columns="2" id="pnlExcluir">
+
+					<p:outputLabel value="Código Perda:" />
+					<p:outputLabel value="#{MBPerda.perda.idPerda}" />
+
+					<p:outputLabel value="Produto:" />
+					<p:outputLabel value="#{MBPerda.perda.produto.descricao}" />
+
+					<p:outputLabel value="Data/Hora:" />
+					<p:outputLabel value="#{MBPerda.perda.dataHoraPerda}">
+						<f:convertDateTime pattern="dd/MM/YYYY hh:mm:ss" />
+					</p:outputLabel>
+					
+					<p:outputLabel value="Quantidade:"/>
+					<p:outputLabel value="#{MBPerda.perda.qtde}"/>
+
+				</h:panelGrid>
+				<br />
+				<center>
+					<h:panelGrid columns="2">
+
+						<p:commandButton value="Excluir"
+							actionListener="#{MBPerda.excluirPerda}"
+							update=":MSG :frmPerda:tblPerda"
+							oncomplete="PF('dlgExcluirPerda').hide()" />
+						<p:commandButton value="Cancelar"
+							onclick="PF('dlgExcluirPerda').hide()" />
+
+					</h:panelGrid>
+				</center>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgCadPerda" modal="true" appendTo="@(body)"
+			resizable="false" draggable="false" closable="false"
+			header="Cadastro de Perdas">
+
+			<h:form id="frmCadPerda">
+
+				<h:panelGrid columns="2" id="pnlCadPerda">
+
+
+					<p:outputLabel value="Produto" for="IdPerda" />
+					<p:selectOneMenu value="#{MBPerda.perda.produto.idProduto}"
+						id="IdPerda" required="true"
+						requiredMessage="Produto é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="" />
+						<f:selectItems value="#{MBPerda.produtoCombo}" var="item"
+							itemValue="#{item.idProduto}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Quantidade" for="idQtde" />
+					<p:inputText maxlength="5" size="5" value="#{MBPerda.perda.qtde}"
+						id="idQtde" required="true"
+						requiredMessage="Quantidade é obrigatório!" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+
+					<p:commandButton value="Gravar"
+						actionListener="#{MBPerda.cadastrarPerda}"
+						oncomplete="verifica(xhr, status, args, 'dlgCadPerda', 'wtblPerda');"
+						update=":MSG :frmPerda:tblPerda" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgCadPerda').hide();" process="@this">
+
+						<p:resetInput target="pnlCadPerda" />
+
+					</p:commandButton>
+
+
+				</h:panelGrid>
+
+			</h:form>
+
+
+		</p:dialog>
+
+	</ui:define>
+
+
+</ui:composition>

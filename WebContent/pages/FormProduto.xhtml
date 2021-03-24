@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/modelo.xhtml">
+
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menu.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+
+		<f:facet name="header">
+			<h1 class="Formularios">Produtos</h1>
+		</f:facet>
+
+		<f:facet name="footer">
+			<center>
+
+				<p:commandButton value="Cadastrar"
+					actionListener="#{MBProduto.preparaProduto}"
+					oncomplete="PF('dlgCadProduto').show();"
+					update=":frmCadProduto:pnlCadProduto" />
+
+
+			</center>
+		</f:facet>
+
+		<h:form id="frmProduto">
+
+			<p:dataTable id="tblProduto" filteredValue="#{MBProduto.itensFiltro}"
+				emptyMessage="Nenhum registro encontrado" value="#{MBProduto.itens}"
+				var="item" widgetVar="wtblProduto" paginator="true" rows="10">
+
+
+				<p:column headerText="Código" sortBy="#{item.idProduto}"
+					filterBy="#{item.idProduto}" filterMatchMode="contains">
+					<center>
+						<h:outputText value="#{item.idProduto}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Tipo produto"
+					sortBy="#{item.tipoProduto.descricao}"
+					filterBy="#{item.tipoProduto.descricao}" filterMatchMode="contains">
+					<center>
+						<h:outputText value="#{item.tipoProduto.descricao}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Descrição" sortBy="#{item.descricao}"
+					filterBy="#{item.descricao}" filterMatchMode="contains">
+					<center>
+
+						<p class="DescricaoProduto">
+							<h:outputText value="#{item.descricao}" />
+						</p>
+					</center>
+				</p:column>
+
+				<p:column headerText="Sabor" sortBy="#{item.sabor.descricao}"
+					filterBy="#{item.sabor.descricao}" filterMatchMode="contains">
+					<center>
+						<p class="DescricaoProduto">
+							<h:outputText value="#{item.sabor.descricao}" />
+						</p>
+					</center>
+				</p:column>
+
+				<p:column headerText="Tipo Polpa"
+					sortBy="#{item.tipoPolpa.descricao}"
+					filterBy="#{item.tipoPolpa.descricao}" filterMatchMode="contains">
+					<center>
+						<h:outputText value="#{item.tipoPolpa.descricao}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Peso" sortBy="#{item.peso}"
+					filterBy="#{item.peso}" filterMatchMode="contains">
+					<center>
+						<h:outputText value="#{item.peso}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Estoque mínimo" sortBy="#{item.estoqueMinimo}"
+					filterBy="#{item.estoqueMinimo}" filterMatchMode="contains">
+					<center>
+						<h:outputText value="#{item.estoqueMinimo}" />
+					</center>
+				</p:column>
+
+
+				<p:column headerText="Ação">
+					<center>
+						<p:commandButton icon="ui-icon-pencil" title="Alterar Produto"
+							oncomplete="PF('dlgAlterCadProduto').show();"
+							actionListener="#{MBProduto.preparaProduto}"
+							update=":frmAlterCadProduto:pnlAlterCadProduto">
+
+							<f:setPropertyActionListener value="#{item}"
+								target="#{MBProduto.produto}" />
+
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-trash" title="Excluir Produto"
+							oncomplete="PF('dlgExclCadProduto').show();"
+							actionListener="#{MBProduto.preparaProduto}"
+							update=":frmExclCadProduto:pnlExclCadProduto">
+
+							<f:setPropertyActionListener value="#{item}"
+								target="#{MBProduto.produto}" />
+
+						</p:commandButton>
+
+					</center>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+
+
+		<p:dialog widgetVar="dlgCadProduto" appendTo="@(body)" modal="true"
+			closable="false" resizable="false" header="Cadastro de produtos"
+			draggable="false">
+
+			<h:form id="frmCadProduto">
+
+				<h:panelGrid id="pnlCadProduto" columns="2">
+
+					<p:outputLabel value="Tipo de produto" for="comoboTpProduto"/>
+					<p:selectOneMenu id="comoboTpProduto" value="#{MBProduto.produto.tipoProduto.id}"
+						required="true" requiredMessage="Tipo do produto é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="" />
+						<f:selectItems value="#{MBProduto.comboProduto}" var="item"
+							itemValue="#{item.id}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Descrição" for="lblDescricao" />
+					<p:inputText id="lblDescricao"
+						value="#{MBProduto.produto.descricao}" size="40" required="true"
+						requiredMessage="Descrição é obrigatório!" maxlength="40" />
+
+					<p:outputLabel value="Sabor" />
+					<p:selectOneMenu value="#{MBProduto.produto.sabor.id}">
+						<f:selectItem itemValue="" itemLabel="" />
+						<f:selectItems value="#{MBProduto.comboSabor}" var="item"
+							itemValue="#{item.id}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Tipo Polpa" />
+					<p:selectOneMenu value="#{MBProduto.produto.tipoPolpa.id}">
+						<f:selectItem itemValue="" itemLabel="" />
+						<f:selectItems value="#{MBProduto.comboTpPolpa}" var="item"
+							itemValue="#{item.id}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Estoque mínimo" for="lblEstoqueMinimo" />
+					<p:inputText id="lblEstoqueMinimo"
+						value="#{MBProduto.produto.estoqueMinimo}" size="3"
+						required="true" requiredMessage="Estoque mínimo é obrigatório!"
+						maxlength="3" />
+
+				</h:panelGrid>
+				<center>
+					<br />
+					<h:panelGrid columns="2">
+						<p:commandButton value="Gravar"
+							actionListener="#{MBProduto.cadastrarProduto}"
+							oncomplete="verifica(xhr, status, args, 'dlgCadProduto', 'wtblProduto');"
+							update=":MSG :frmProduto:tblProduto" />
+						<p:commandButton value="Cancelar" process="@this"
+							onclick="PF('dlgCadProduto').hide();">
+							<p:resetInput target="pnlCadProduto" />
+						</p:commandButton>
+					</h:panelGrid>
+				</center>
+			</h:form>
+
+		</p:dialog>
+
+
+
+		<p:dialog widgetVar="dlgExclCadProduto" appendTo="@(body)"
+			modal="true" closable="false" resizable="false"
+			header="Excluir Cadastro de produtos" draggable="false">
+
+			<h:form id="frmExclCadProduto">
+
+				<h:panelGrid id="pnlExclCadProduto" columns="2">
+
+					<p:outputLabel value="Código:" />
+					<p:outputLabel value="#{MBProduto.produto.idProduto}" />
+
+					<p:outputLabel value="Tipo de produto:" />
+					<p:outputLabel value="#{MBProduto.produto.tipoProduto.descricao}" />
+
+					<p:outputLabel value="Descrição:" />
+					<p:outputLabel value="#{MBProduto.produto.descricao}" />
+
+					<p:outputLabel value="Sabor:" />
+					<p:outputLabel value="#{MBProduto.produto.sabor.descricao}" />
+
+					<p:outputLabel value="Tipo Polpa:" />
+					<p:outputLabel value="#{MBProduto.produto.tipoPolpa.descricao}" />
+
+					<p:outputLabel value="Estoque mínimo:" />
+					<p:outputLabel value="#{MBProduto.produto.estoqueMinimo}" />
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						oncomplete="PF('dlgExclCadProduto').hide();PF('wtblProduto').clearFilters();"
+						actionListener="#{MBProduto.excluirProduto}"
+						update=":MSG :frmProduto:tblProduto" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgExclCadProduto').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+
+
+		<p:dialog widgetVar="dlgAlterCadProduto" appendTo="@(body)"
+			modal="true" closable="false" resizable="false"
+			header="Cadastro de produtos" draggable="false">
+
+			<h:form id="frmAlterCadProduto">
+
+				<h:panelGrid id="pnlAlterCadProduto" columns="2">
+
+					<p:outputLabel value="Tipo de produto" />
+					<p:selectOneMenu value="#{MBProduto.produto.tipoProduto.id}">
+						<f:selectItems value="#{MBProduto.comboProduto}" var="item"
+							itemValue="#{item.id}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Descrição" />
+					<p:inputText value="#{MBProduto.produto.descricao}" size="40"
+						required="true" requiredMessage="Descrição obrigatório!"
+						maxlength="40" />
+
+					<p:outputLabel value="Sabor" />
+					<p:selectOneMenu value="#{MBProduto.produto.sabor.id}">
+						<f:selectItems value="#{MBProduto.comboSabor}" var="item"
+							itemValue="#{item.id}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Tipo Polpa" />
+					<p:selectOneMenu value="#{MBProduto.produto.tipoPolpa.id}">
+						<f:selectItems value="#{MBProduto.comboTpPolpa}" var="item"
+							itemValue="#{item.id}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Estoque mínimo" />
+					<p:inputText value="#{MBProduto.produto.estoqueMinimo}" size="3"
+						required="true" requiredMessage="Estoque mínimo obrigatório!"
+						maxlength="3" />
+
+				</h:panelGrid>
+				<center>
+					<br />
+					<h:panelGrid columns="2">
+						<p:commandButton value="Alterar"
+							actionListener="#{MBProduto.alterarProduto}"
+							oncomplete="verifica(xhr, status, args, 'dlgAlterCadProduto', 'wtblProduto');"
+							update=":MSG :frmProduto:tblProduto" />
+						<p:commandButton value="Cancelar" process="@this"
+							onclick="PF('dlgAlterCadProduto').hide();">
+							<p:resetInput target="pnlAlterCadProduto" />
+						</p:commandButton>
+					</h:panelGrid>
+				</center>
+			</h:form>
+
+		</p:dialog>
+
+
+	</ui:define>
+
+</ui:composition>

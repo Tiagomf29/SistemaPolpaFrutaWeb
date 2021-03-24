@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/modelo.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menu.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+
+		<f:facet name="header">
+			<h1 class="Formularios">Cadastro de entradas</h1>
+		</f:facet>
+
+
+		<f:facet name="footer">
+			<center>
+				<p:commandButton value="Cadastrar"
+					style="height: 40px; width: 130px; margin-bottom: 10px;"
+					actionListener="#{MBEntrada.instaciaEntrada}"
+					oncomplete="PF('dlgCadEntrada').show();"
+					update=":frmCadEntrada:pnlCadEntrada" />
+			</center>
+		</f:facet>
+		<f:facet name="footer">
+
+			<h:form id="frmLbl">
+
+				<h:panelGrid columns="2">
+					<h:outputText id="lbl" style="color:red; font-size:90px;"
+						value="#{MBEntrada.entradaSomaValor.produto.valor.valorTotalProduto}">
+
+						<f:convertNumber pattern="R$ #,##0.00" />
+
+					</h:outputText>
+					<center>
+						<p:commandButton value="Confirmar itens de entrada"
+							style="height: 50px; width: 200px; margin-bottom: 10px;"
+							actionListener="#{MBEntrada.instaciaEntrada}"
+							oncomplete="PF('dlgConfirm').show();" />
+					</center>
+				</h:panelGrid>
+			</h:form>
+
+		</f:facet>
+
+		<h:form id="formularioEntrada">
+
+			<p:dataTable widgetVar="dlgTabelaEntradas"
+				emptyMessage="Nenhum registro encontrado!!"
+				value="#{MBEntrada.itens}" var="item" id="tabelaEntrada"
+				filteredValue="#{MBEntrada.itensFiltro}">
+
+				<p:column headerText="Código Entrada" sortBy="#{item.idEntrada}"
+					filterBy="#{item.idEntrada}">
+					<center>
+						<p:outputLabel value="#{item.idEntrada}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Produto" sortBy="#{item.produto.descricao}"
+					filterBy="#{item.produto.descricao}">
+					<center>
+						<p class="DescricaoProduto">
+							<h:outputText value="#{item.produto.descricao}" />
+						</p>
+					</center>
+				</p:column>
+
+				<p:column headerText="Data/Hora" sortBy="#{item.dataHora}"
+					filterBy="#{item.dataHora}" filterMatchMode="contains">
+					<center>
+						<h:outputText value="#{item.dataHora}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm"
+								timeZone="America/Sao_Paulo" />
+						</h:outputText>
+					</center>
+				</p:column>
+
+				<p:column headerText="Valor Unitário">
+					<center>
+						<h:outputText value="#{item.produto.valor.valor}">
+							<f:convertNumber pattern="R$ #,##0.00" />
+						</h:outputText>
+					</center>
+				</p:column>
+
+				<p:column headerText="Quantidade">
+					<center>
+						<h:outputText value="#{item.quantidade}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Valor Total">
+					<center>
+						<h:outputText value="#{item.produto.valor.valorTotalProduto}">
+							<f:convertNumber pattern="R$ #,##0.00" />
+						</h:outputText>
+					</center>
+				</p:column>
+
+				<p:column headerText="Ação">
+					<center>
+						<p:commandButton icon="ui-icon-trash"
+							oncomplete="PF('dlgExcluirEntrada').show();"
+							update=":frmExcluirEntrada:pnlExcluirEntrada">
+
+							<f:setPropertyActionListener value="#{item}"
+								target="#{MBEntrada.entrada}" />
+
+						</p:commandButton>
+						<p:commandButton icon="ui-icon-cart" title="Cadastrar Valor"
+							oncomplete="PF('dlgCadastrarValores').show();"
+							update=":frmCadastrarValores:pnlCadastrarValores">
+
+
+							<f:setPropertyActionListener value="#{item}"
+								target="#{MBEntrada.entrada}" />
+
+						</p:commandButton>
+					</center>
+				</p:column>
+
+
+			</p:dataTable>
+
+
+		</h:form>
+
+		<p:dialog widgetVar="dlgCadEntrada" modal="true" appendTo="@(body)"
+			resizable="false" draggable="false" closable="false"
+			header="Cadastro de entradas">
+
+			<h:form id="frmCadEntrada">
+
+				<h:panelGrid columns="2" id="pnlCadEntrada">
+					<p:outputLabel value="Produto" for="idProduto" />
+					<p:selectOneMenu id="idProduto" filter="true"
+						filterMatchMode="contains"
+						value="#{MBEntrada.entrada.produto.idProduto}" required="true"
+						requiredMessage="Produto é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="" />
+						<f:selectItems value="#{MBEntrada.comboProduto}" var="item"
+							itemValue="#{item.idProduto}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Quantidade" for="idQuantidade" />
+					<p:inputText id="idQuantidade"
+						value="#{MBEntrada.entrada.quantidade}" maxlength="5" size="5"
+						required="true" requiredMessage="Quantidade é obrigatório" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+
+					<p:commandButton value="Gravar"
+						actionListener="#{MBEntrada.insereEntradaTemporario}"
+						oncomplete="verifica(xhr, status, args, 'dlgCadEntrada', 'dlgTabelaEntradas');"
+						update=":MSG :formularioEntrada:tabelaEntrada :frmLbl:lbl" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgCadEntrada').hide();" process="@this">
+
+						<p:resetInput target="pnlCadEntrada" />
+
+					</p:commandButton>
+				</h:panelGrid>
+			</h:form>
+
+
+		</p:dialog>
+
+
+		<p:dialog widgetVar="dlgExcluirEntrada" modal="true"
+			appendTo="@(body)" resizable="false" closable="false"
+			draggable="false" header="Exclusão de Entrada">
+
+			<h:form id="frmExcluirEntrada">
+
+				<h:panelGrid columns="2" id="pnlExcluirEntrada">
+
+					<h:outputText value="Código" />
+					<h:outputText value="#{MBEntrada.entrada.idEntrada}" />
+
+					<h:outputText value="Produto" />
+					<h:outputText value="#{MBEntrada.entrada.produto.descricao}" />
+
+					<h:outputText value="Data/Hora" />
+					<h:outputText value="#{MBEntrada.entrada.dataHora}" />
+
+					<h:outputText value="Quantidade" />
+					<h:outputText value="#{MBEntrada.entrada.quantidade}" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+
+					<p:commandButton value="Excluir"
+						actionListener="#{MBEntrada.excluirEntradaTemporario}"
+						update=":formularioEntrada:tabelaEntrada :frmLbl:lbl"
+						oncomplete="PF('dlgExcluirEntrada').hide();PF('dlgTabelaEntradas').clearFilters();" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgExcluirEntrada').hide();" process="@this">
+
+						<p:resetInput target="pnlExcluirEntrada" />
+
+					</p:commandButton>
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgConfirm" modal="true" appendTo="@(body)"
+			resizable="false" closable="false"
+			header="Confirmação de Itens de entrada">
+			<h:form>
+				<h:panelGrid columns="2">
+					<h:outputLabel
+						value="Atenção! Tem Certeza que deseja confirmar os lançamentos de itens de entrada?" />
+				</h:panelGrid>
+				<center>
+					<h:panelGrid columns="2">
+						<p:commandButton value="Gravar"
+							oncomplete="PF('dlgConfirm').hide();PF('dlgTabelaEntradas').clearFilters();"
+							actionListener="#{MBEntrada.confirmarItensEntrada}"
+							update=":MSG :frmLbl:lbl" />
+						<p:commandButton value="Cancelar"
+							onclick="PF('dlgConfirm').hide();" />
+					</h:panelGrid>
+				</center>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgCadastrarValores" appendTo="@(body)"
+			modal="true" resizable="false" draggable="false"
+			header="Cadastrar Valores" closable="false">
+
+			<h:form id="frmCadastrarValores">
+
+				<h:panelGrid columns="2" id="pnlCadastrarValores">
+
+					<p:outputLabel value="Produto:" />
+					<p:outputLabel value="#{MBEntrada.entrada.produto.descricao}" />
+
+					<p:outputLabel for="lblData" value="Data" />
+					<p:inputMask id="lblData" mask="99/99/9999"
+						value="#{MBEntrada.entrada.dataHoraString}" maxlength="10"
+						size="10" required="true"
+						requiredMessage="Data de vigência do valor é obrigatório!" />
+
+					<p:outputLabel for="lblValor" value="Valor" />
+					<p:inputText id="lblValor"
+						value="#{MBEntrada.entrada.produto.valor.valor}" maxlength="10"
+						size="10" required="true"
+						requiredMessage="Valor do produto é obrigatório!">
+
+						<f:convertNumber />
+
+					</p:inputText>
+
+
+				</h:panelGrid>
+				<br />
+				<center>
+					<h:panelGrid columns="2">
+
+						<p:commandButton value="Gravar"
+							actionListener="#{MBEntrada.inserirValores}"
+							oncomplete="verifica(xhr, status, args, 'dlgCadastrarValores', 'dlgTabelaEntradas');"
+							update=":MSG :frmLbl:lbl" />
+						<p:commandButton value="Cancelar" process="@this"
+							onclick="PF('dlgCadastrarValores').hide();">
+							<p:resetInput target="pnlCadastrarValores" />
+						</p:commandButton>
+
+					</h:panelGrid>
+				</center>
+			</h:form>
+
+
+		</p:dialog>
+
+	</ui:define>	
+
+</ui:composition>

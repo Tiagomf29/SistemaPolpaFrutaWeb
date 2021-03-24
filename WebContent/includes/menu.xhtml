@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h = "http://java.sun.com/jsf/html"
+	  xmlns:p = "http://primefaces.org/ui"
+	  xmlns:ui = "http://java.sun.com/jsf/facelets">
+
+	<h:form>
+	
+		<p:menubar>
+		
+			<p:submenu label="Arquivos">
+				<p:menuitem value="Inicio" outcome="/pages/principal.xhtml"/>
+			</p:submenu>
+			
+			<p:submenu label="Cadastro">
+			
+				<p:menuitem value="Sabor" outcome="/pages/FormSabor.xhtml"/>
+				<p:menuitem value="Produto" outcome="/pages/FormProduto.xhtml"/>
+				<p:menuitem value="Valores" outcome="/pages/FormValores.xhtml"/>
+				
+			</p:submenu>
+			
+			<p:submenu label="Movimentações">
+				<p:menuitem value="Perda" outcome="/pages/FormPerdas"/>
+				<p:menuitem value="Entrada" outcome="/pages/FormEntrada"/>
+				<p:menuitem value="Vendas" outcome="/pages/FormVenda"/>
+			</p:submenu>
+			
+		
+			<p:submenu label="Consulta">			
+				<p:menuitem value="Estoque" outcome="/pages/FormEstoque"/>			
+			</p:submenu>			
+		
+		</p:menubar>
+	
+	</h:form>
+
+</ui:composition>

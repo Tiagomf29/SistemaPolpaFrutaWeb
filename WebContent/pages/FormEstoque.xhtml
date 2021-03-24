@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/modelo.xhtml">
+
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menu.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<f:facet name="header">
+
+			<center>
+				<h1 class="Formularios">Estoque de Produtos</h1>
+			</center>
+
+		</f:facet>
+
+		<h:form>
+			<p:dataTable emptyMessage="Nenhum registro econtrado!!"
+				value="#{MBEstoque.itens}" var="item"
+				filteredValue="#{MBEstoque.itensFiltro}">
+
+
+				<p:column headerText="Código produto" sortBy="#{item.codigo}"
+					filterBy="#{item.codigo}" filterMatchMode="contains" >
+					<center>
+						<p class="itensGrid"> <h:outputText value="#{item.codigo}" /></p>
+					</center>
+				</p:column>
+
+				<p:column headerText="Descrição produto"
+					sortBy="#{item.descricaoProduto}" 
+					filterBy="#{item.descricaoProduto}" filterMatchMode="contains">
+					<center>
+						<h:outputText value="#{item.descricaoProduto}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Quantidade" sortBy="#{item.quantidade}" filterMatchMode="contains"
+					filterBy="#{item.quantidade}" >
+					<center>
+						<h:outputText value="#{item.quantidade}" />
+					</center>
+				</p:column>
+
+
+			</p:dataTable>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

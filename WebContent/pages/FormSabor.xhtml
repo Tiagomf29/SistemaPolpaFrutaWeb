@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/template/modelo.xhtml">
+
+
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menu.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<f:facet name="header">
+			<h1 class="Formularios">Sabores</h1>
+		</f:facet>
+
+		<f:facet name="footer">
+			<center>
+				<p:commandButton value="Cadastrar"
+					actionListener="#{MBSabor.instaciarSabor}"
+					oncomplete="PF('dlgCadSabor').show();" update=":frmDlg:pnlDlg" />
+			</center>
+		</f:facet>
+
+		<h:form id="frmSabor">
+			<p:dataTable id="tblSabor" emptyMessage="Nenhum registro encontrado!"
+				filteredValue="#{MBSabor.itensFiltro}" value="#{MBSabor.itens}"
+				var="item" widgetVar="wtblsabor" paginator="true" rows="10">
+
+				<p:column headerText="Código" sortBy="#{item.id}"
+					filterBy="#{item.id}">
+					<center>
+						<h:outputText value="#{item.id}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Descrição" sortBy="#{item.descricao}"
+					filterBy="#{item.descricao}">
+					<center>
+						<p class="DescricaoProduto">
+							<h:outputText value="#{item.descricao}" />
+						</p>
+					</center>
+				</p:column>
+
+				<p:column headerText="Ação">
+					<center>
+						<p:commandButton icon="ui-icon-pencil"
+							title="Alterar descrição do sabor"
+							update=":frmAlterCadSabor:pnlAlterCadSabor"
+							oncomplete="PF('dlgCadSaborAlter').show();">
+
+							<f:setPropertyActionListener value="#{item}"
+								target="#{MBSabor.sabor}" />
+
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-trash"
+							update=":frmExcluirCadSabor:pnlExcluirCadUsuario"
+							oncomplete="PF('dlgExcluirCadSabor').show();">
+
+							<f:setPropertyActionListener value="#{item}"
+								target="#{MBSabor.sabor}" />
+
+						</p:commandButton>
+					</center>
+				</p:column>
+
+			</p:dataTable>
+
+		</h:form>
+
+
+		<p:dialog widgetVar="dlgCadSabor" modal="true" appendTo="@(body)"
+			resizable="false" draggable="false" header="Cadastro de Sabor"
+			closable="false" visible="false">
+			<h:form id="frmDlg">
+				<h:panelGrid columns="2" id="pnlDlg">
+					<p:outputLabel for="lblDescricao" value="Descrição" />
+					<p:inputText size="40" maxlength="40" id="lblDescricao"
+						value="#{MBSabor.sabor.descricao}" required="true"
+						requiredMessage="Nome do sabor é obrigatório!" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Gravar" update=":MSG :frmSabor:tblSabor"
+						actionListener="#{MBSabor.cadastrarSabor}"
+						oncomplete="verifica(xhr, status, args, 'dlgCadSabor', 'wtblsabor');" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgCadSabor').hide();">
+							<p:resetInput target="pnlDlg"/>
+						</p:commandButton>
+				</h:panelGrid>
+			</h:form>
+
+		</p:dialog>
+
+
+
+		<p:dialog widgetVar="dlgCadSaborAlter" appendTo="@(body)" modal="true"
+			closable="false" draggable="false" header="Alteração de Sabor"
+			resizable="false">
+
+			<h:form id="frmAlterCadSabor">
+
+				<h:panelGrid id="pnlAlterCadSabor">
+
+					<p:outputLabel value="Sabor" for="lblDescrcao" />
+					<p:inputText id="lblDescrcao" value="#{MBSabor.sabor.descricao}"
+						required="true" requiredMessage="Nome do sabor é obrigatório!" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+
+					<p:commandButton value="Alterar"
+						actionListener="#{MBSabor.alterarSabor}"
+						oncomplete="verifica(xhr, status, args, 'dlgCadSaborAlter', 'wtblsabor');"
+						update=":MSG :frmSabor:tblSabor" />
+					<p:commandButton value="Cancelar" process="@this"
+						onclick="PF('dlgCadSaborAlter').hide();">
+							<p:resetInput target="pnlAlterCadSabor"/>
+						</p:commandButton>
+
+				</h:panelGrid>
+
+
+			</h:form>
+
+		</p:dialog>
+
+
+
+		<p:dialog widgetVar="dlgExcluirCadSabor" appendTo="@(body)"
+			modal="true" resizable="false" draggable="false" closable="false"
+			header="Exclusão de Sabor">
+
+			<h:form id="frmExcluirCadSabor">
+
+				<h:panelGrid columns="2" id="pnlExcluirCadUsuario">
+
+					<h:outputLabel value="Código" />
+					<h:outputLabel value="#{MBSabor.sabor.id}" />
+
+					<h:outputLabel value="Descrição" />
+					<h:outputLabel value="#{MBSabor.sabor.descricao}" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+
+					<p:commandButton value="Excluir"
+						oncomplete="PF('dlgExcluirCadSabor').hide();PF('wtblsabor').clearFilters();"
+						update=":MSG :frmSabor:tblSabor"
+						actionListener="#{MBSabor.excluirSabor}" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgExcluirCadSabor').hide();" />
+
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+	</ui:define>
+
+
+
+
+
+
+
+
+</ui:composition>
